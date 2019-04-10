@@ -19,9 +19,9 @@ class VideoHelper {
         let mediaUI = UIImagePickerController()
         mediaUI.sourceType = sourceType
         mediaUI.mediaTypes = [kUTTypeMovie as String]
-        mediaUI.videoMaximumDuration = 15
+        mediaUI.videoMaximumDuration = 20
         mediaUI.delegate = delegate
-        mediaUI.cameraDevice = .front
+        mediaUI.cameraDevice = .rear
         delegate.present(mediaUI, animated: true, completion: nil)
     }
     

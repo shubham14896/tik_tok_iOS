@@ -9,6 +9,7 @@
 import UIKit
 import AVKit
 import Photos
+import SDWebImage
 
 class MusicDataSource {
     var name: String = ""
@@ -20,7 +21,7 @@ class MusicDataSource {
     
     init(with dict: [String: Any]) {
         self.name = dict["name"] as? String ?? ""
-        self.author = dict["author"] as? String ?? ""
+        self.author = dict["singer"] as? String ?? ""
         self.music = dict["music"] as? String ?? ""
         self.image = dict["image"] as? String ?? ""
     }
@@ -31,6 +32,7 @@ class SelectAudioController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     var videoUrl: URL?
     var dataSource = [MusicDataSource]()
+    var showLoaderAt = -1
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -83,9 +85,12 @@ class SelectAudioController: UIViewController {
     
     func mergeVideoAndAudio(audioUrl: URL) {
         
+        showLoaderAt = -1
+        
         guard let videoUrl = videoUrl else { return }
         let videoAsset = AVAsset(url: videoUrl)
         let loadedAudioAsset = AVAsset(url: audioUrl)
+        
         print("playing \(audioUrl)")
         print("Time to merge \(videoAsset) ::::::::: \(loadedAudioAsset)")
         
@@ -135,6 +140,7 @@ class SelectAudioController: UIViewController {
         exporter.exportAsynchronously() {
             DispatchQueue.main.async {
                 self.exportDidFinish(exporter)
+                self.tableView.reloadData()
             }
         }
     }
@@ -175,14 +181,37 @@ extension SelectAudioController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = UITableViewCell()
-        cell.textLabel?.text = dataSource[indexPath.row].name
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: "SongCell", for: indexPath)
+        
+        if let cell = cell as? SongCell {
+            
+            cell.setup(dataSource[indexPath.row], showLoader: showLoaderAt == indexPath.row ? true : false)
+        }
+        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("AUDIO SELECTED")
+        showLoaderAt = indexPath.row
+        tableView.reloadData()
         guard let url = URL(string: dataSource[indexPath.row].music) else { return }
         downloadFileFromURL(url: url)
     }
+}
+
+class SongCell: UITableViewCell {
+    @IBOutlet weak var imgView: UIImageView!
+    @IBOutlet weak var nameLabel: UILabel!
+    @IBOutlet weak var descLabel: UILabel!
+    @IBOutlet weak var loader: UIActivityIndicatorView!
+    
+    func setup(_ data: MusicDataSource, showLoader: Bool) {
+        imgView.sd_setImage(with: URL(string: data.image), completed: nil)
+        nameLabel.text = data.name
+        descLabel.text = "By - \(data.author)"
+        loader.isHidden = showLoader ? false : true
+        showLoader ? loader.startAnimating() : loader.stopAnimating()
+    }
+    
 }
