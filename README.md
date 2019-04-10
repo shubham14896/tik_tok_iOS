@@ -19,8 +19,7 @@ run pod install
 * Build & Run in iOS Device.
 
 ## Preview
-[![Working Flow](https://img.youtube.com/vi/r0tGddqnEn0/0.jpg)]((http://www.youtube.com/watch?v=r0tGddqnEn0 "Working Flow")
-[![IMAGE ALT TEXT](http://img.youtube.com/vi/r0tGddqnEn0/0.jpg)](http://www.youtube.com/watch?v=r0tGddqnEn0 "Video Title")
+[![IMAGE ALT TEXT](http://img.youtube.com/vi/r0tGddqnEn0/0.jpg)](http://www.youtube.com/watch?v=r0tGddqnEn0 "Preview")
 
 ## Acknowledgments
 
